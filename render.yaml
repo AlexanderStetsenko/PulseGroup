@@ -13,6 +13,8 @@ services:
         value: Production
       - key: TZ
         value: Europe/Warsaw
+      - key: RENDER_EXTERNAL_URL
+        sync: false
       # Add your bot token and other secrets in Render dashboard
       # - key: BOT_TOKEN
       #   sync: false

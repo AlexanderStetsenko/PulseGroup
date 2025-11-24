@@ -28,6 +28,9 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.ListenAnyIP(int.Parse(port));
 });
 
+// Add HttpClient for self-ping
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
 
 // Health check endpoint for Render
@@ -92,6 +95,42 @@ botClient.StartReceiving(
 
 Console.WriteLine($"? Listening for messages...");
 Console.WriteLine($"Bot is running. Press Ctrl+C to stop.");
+
+
+// ============================================================================
+// SELF-PING MECHANISM (Keep Render free tier alive)
+// ============================================================================
+var renderUrl = Environment.GetEnvironmentVariable("RENDER_EXTERNAL_URL");
+if (!string.IsNullOrEmpty(renderUrl))
+{
+    var httpClientFactory = app.Services.GetRequiredService<IHttpClientFactory>();
+    _ = Task.Run(async () =>
+    {
+        var httpClient = httpClientFactory.CreateClient();
+        Console.WriteLine($"?? Self-ping enabled for {renderUrl}");
+        
+        while (!cts.Token.IsCancellationRequested)
+        {
+            try
+            {
+                await Task.Delay(TimeSpan.FromMinutes(10), cts.Token);
+                var response = await httpClient.GetAsync($"{renderUrl}/health", cts.Token);
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"?? Self-ping successful at {DateTime.UtcNow:HH:mm:ss}");
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                break;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"?? Self-ping failed: {ex.Message}");
+            }
+        }
+    }, cts.Token);
+}
 
 // Handle shutdown gracefully
 Console.CancelKeyPress += (sender, e) =>
