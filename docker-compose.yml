@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  pulsegroup-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pulsegroup-bot
+    restart: unless-stopped
+    volumes:
+      # Persistent storage for configuration and statistics
+      - ./data:/app/data
+    environment:
+      # Optional: Override settings via environment variables
+      - TZ=Europe/Warsaw
+    networks:
+      - bot-network
+
+networks:
+  bot-network:
+    driver: bridge

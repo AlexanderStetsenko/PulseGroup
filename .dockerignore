@@ -1,0 +1,28 @@
+# Ignore build artifacts
+**/bin/
+**/obj/
+**/out/
+
+# Ignore IDE files
+**/.vs/
+**/.vscode/
+**/.idea/
+
+# Ignore data files
+**/data/
+**/*.json
+!**/example.json
+
+# Ignore Git files
+.git/
+.gitignore
+.gitattributes
+
+# Ignore documentation
+*.md
+!README.md
+
+# Ignore Docker files (they're copied separately)
+Dockerfile
+docker-compose.yml
+.dockerignore

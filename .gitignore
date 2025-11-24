@@ -1,0 +1,59 @@
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio cache/options
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files
+*.rsuser
+
+# Data files (persistent storage)
+data/
+*.json
+!*.example.json
+!appsettings.json
+
+# Docker volumes
+volumes/
+
+# Rider
+.idea/
+
+# User secrets
+**/appsettings.Development.json
+secrets/
+
+# Backup files
+*.bak
+backup-*.tar.gz
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Publish profiles
+*.pubxml
+*.pubxml.user
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/

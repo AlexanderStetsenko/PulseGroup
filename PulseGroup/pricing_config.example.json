@@ -1,0 +1,10 @@
+{
+  "Docs": 1500.0,
+  "PortFee": 700.0,
+  "Evacuator": 3050.0,
+  "EuroRegistration": 1500.0,
+  "ServicesFee": 1600.0,
+  "DeliveryShip": 1500.0,
+  "DeliveryTrain": 3500.0,
+  "CustomsPercent": 0.31
+}
