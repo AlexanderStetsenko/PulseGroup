@@ -15,8 +15,8 @@ RUN dotnet build "PulseGroup.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish "PulseGroup.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-# Use .NET 10 runtime for the final image
-FROM mcr.microsoft.com/dotnet/runtime:10.0 AS final
+# Use .NET 10 ASP.NET runtime for the final image (needed for web features)
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 
 # Set environment variables for UTF-8 support
@@ -29,6 +29,9 @@ COPY --from=publish /app/publish .
 
 # Create volume for persistent data (config and statistics)
 VOLUME ["/app/data"]
+
+# Expose port for health checks (Render will set PORT env variable)
+EXPOSE 8080
 
 # Run the application
 ENTRYPOINT ["dotnet", "PulseGroup.dll"]

@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: pulsegroup-bot
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        generateValue: true
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: TZ
+        value: Europe/Warsaw
+      # Add your bot token and other secrets in Render dashboard
+      # - key: BOT_TOKEN
+      #   sync: false
+    # Persistent disk for configuration and statistics
+    disk:
+      name: bot-data
+      mountPath: /app/data
+      sizeGB: 1

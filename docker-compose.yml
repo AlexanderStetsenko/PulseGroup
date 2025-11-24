@@ -7,12 +7,17 @@ services:
       dockerfile: Dockerfile
     container_name: pulsegroup-bot
     restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:${PORT:-8080}"
     volumes:
       # Persistent storage for configuration and statistics
       - ./data:/app/data
     environment:
+      # Port for HTTP health checks (Render will provide this)
+      - PORT=${PORT:-8080}
       # Optional: Override settings via environment variables
       - TZ=Europe/Warsaw
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
     networks:
       - bot-network
 
