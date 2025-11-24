@@ -6,6 +6,9 @@ using PulseGroup.Configuration;
 using PulseGroup.Models;
 using PulseGroup.Services;
 using PulseGroup.Handlers;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 // ============================================================================
 // CONSOLE ENCODING SETUP (Important for Russian text!)
@@ -14,10 +17,29 @@ Console.OutputEncoding = Encoding.UTF8;
 Console.InputEncoding = Encoding.UTF8;
 
 // ============================================================================
+// WEB APPLICATION BUILDER (For Render Health Check)
+// ============================================================================
+var builder = WebApplication.CreateBuilder(args);
+
+// Configure Kestrel to listen on the port provided by Render
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenAnyIP(int.Parse(port));
+});
+
+var app = builder.Build();
+
+// Health check endpoint for Render
+app.MapGet("/", () => Results.Ok(new { status = "healthy", bot = "PulseGroup", version = BotConfig.BotVersion }));
+app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
+
+// ============================================================================
 // BOT INITIALIZATION
 // ============================================================================
 Console.WriteLine("?? PulseGroup Bot Starting...");
 Console.WriteLine($"?? Version: {BotConfig.BotVersion}");
+Console.WriteLine($"?? HTTP Server listening on port: {port}");
 Console.WriteLine();
 
 // Create bot client
@@ -78,10 +100,16 @@ Console.CancelKeyPress += (sender, e) =>
     cts.Cancel();
 };
 
+// Start the web server
+var webServerTask = app.RunAsync(cts.Token);
+
 // Wait indefinitely until cancellation is requested
 try
 {
-    await Task.Delay(-1, cts.Token);
+    await Task.WhenAny(
+        Task.Delay(-1, cts.Token),
+        webServerTask
+    );
 }
 catch (TaskCanceledException)
 {
