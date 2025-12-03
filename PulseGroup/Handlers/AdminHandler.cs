@@ -135,27 +135,18 @@ public class AdminHandler
             },
             new[]
             {
-                InlineKeyboardButton.WithCallbackData(Localization.Buttons.ButtonQuickSettings, "admin_quick_settings"),
+                InlineKeyboardButton.WithCallbackData("?? ?????????? ???????", "admin_edit_import_preparation"),
+                InlineKeyboardButton.WithCallbackData("?? ????????", "admin_edit_land_sea_delivery")
             },
             new[]
             {
-                InlineKeyboardButton.WithCallbackData(Localization.Buttons.ButtonEditDocsChina, "admin_edit_docs_china"),
-                InlineKeyboardButton.WithCallbackData(Localization.Buttons.ButtonEditPort, "admin_edit_port_fee")
+                InlineKeyboardButton.WithCallbackData("?? ??????", "admin_edit_broker"),
+                InlineKeyboardButton.WithCallbackData("?? ????????? ?? ?????", "admin_edit_transport_from_port")
             },
             new[]
             {
-                InlineKeyboardButton.WithCallbackData(Localization.Buttons.ButtonEditEvacuator, "admin_edit_evacuator"),
-                InlineKeyboardButton.WithCallbackData(Localization.Buttons.ButtonEditEuroReg, "admin_edit_euro_registration")
-            },
-            new[]
-            {
-                InlineKeyboardButton.WithCallbackData(Localization.Buttons.ButtonEditServices, "admin_edit_services_fee"),
-                InlineKeyboardButton.WithCallbackData(Localization.Buttons.ButtonEditCustoms, "admin_edit_customs_percent")
-            },
-            new[]
-            {
-                InlineKeyboardButton.WithCallbackData(Localization.Buttons.ButtonEditDeliveryShip, "admin_edit_delivery_ship"),
-                InlineKeyboardButton.WithCallbackData(Localization.Buttons.ButtonEditDeliveryTrain, "admin_edit_delivery_train")
+                InlineKeyboardButton.WithCallbackData("?? ??????? %", "admin_edit_customs_percent"),
+                InlineKeyboardButton.WithCallbackData("?? ??????", "admin_edit_import_services")
             },
             new[]
             {
@@ -165,6 +156,10 @@ public class AdminHandler
             new[]
             {
                 InlineKeyboardButton.WithCallbackData(Localization.Buttons.ButtonLogout, "admin_logout")
+            },
+            new[]
+            {
+                InlineKeyboardButton.WithCallbackData(Localization.Buttons.ButtonMainMenu, "main_menu")
             }
         });
 
@@ -175,26 +170,20 @@ public class AdminHandler
     {
         switch (settingName)
         {
-            case "docs_china":
-                _pricingConfig.Docs = newValue;
+            case "import_preparation":
+                _pricingConfig.ImportPreparation = newValue;
                 break;
-            case "port_fee":
-                _pricingConfig.PortFee = newValue;
+            case "land_sea_delivery":
+                _pricingConfig.LandSeaDelivery = newValue;
                 break;
-            case "evacuator":
-                _pricingConfig.Evacuator = newValue;
+            case "broker":
+                _pricingConfig.Broker = newValue;
                 break;
-            case "euro_registration":
-                _pricingConfig.EuroRegistration = newValue;
+            case "transport_from_port":
+                _pricingConfig.TransportFromPort = newValue;
                 break;
-            case "services_fee":
-                _pricingConfig.ServicesFee = newValue;
-                break;
-            case "delivery_ship":
-                _pricingConfig.DeliveryShip = newValue;
-                break;
-            case "delivery_train":
-                _pricingConfig.DeliveryTrain = newValue;
+            case "import_services":
+                _pricingConfig.ImportServices = newValue;
                 break;
             case "customs_percent":
                 _pricingConfig.CustomsPercent = newValue / 100m;

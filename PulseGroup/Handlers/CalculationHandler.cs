@@ -37,20 +37,20 @@ public class CalculationHandler
             new[]
             {
                 InlineKeyboardButton.WithCallbackData(Buttons.ButtonChina, "country_china"),
-            },
-            new[]
-            {
-                InlineKeyboardButton.WithCallbackData(Buttons.ButtonUSA, "country_usa"),
-                InlineKeyboardButton.WithCallbackData(Buttons.ButtonEurope, "country_europe")
             }
+            // USA and Europe buttons hidden - only China is available
+            // new[]
+            // {
+            //     InlineKeyboardButton.WithCallbackData(Buttons.ButtonUSA, "country_usa"),
+            //     InlineKeyboardButton.WithCallbackData(Buttons.ButtonEurope, "country_europe")
+            // }
         });
 
         _userSessions[chatId] = new CarCalculation { CurrentStep = "awaiting_country" };
 
         var message = $"{Messages.CalcTitle}\n\n" +
-                     $"{Messages.CalcStep1}\n\n" +
-                     $"{Messages.CalcWarningTitle}\n" +
-                     $"{Messages.CalcWarningUSAEurope}";
+                     $"{Messages.CalcStep1}";
+                     // Removed warning about USA/Europe since they're not shown
         
         await MessageHelper.SendMessageSafeAsync(botClient, chatId, message, cancellationToken, ParseMode.Markdown, keyboard);
     }
@@ -68,34 +68,18 @@ public class CalculationHandler
             if (decimal.TryParse(message.Text, out decimal price) && price > 0)
             {
                 session.CarPrice = price;
-                session.CurrentStep = "awaiting_delivery";
+                session.DeliveryType = "train"; // Always use train delivery
+                session.CurrentStep = "complete";
 
-                // Get calculator to show available delivery options
-                var calculator = _calculationService.GetCalculatorForCountry(session.Country!);
-                
-                var keyboard = new InlineKeyboardMarkup(new[]
-                {
-                    new[]
-                    {
-                        InlineKeyboardButton.WithCallbackData(Buttons.ButtonDeliveryShip, "delivery_ship"),
-                        InlineKeyboardButton.WithCallbackData(Buttons.ButtonDeliveryTrain, "delivery_train")
-                    }
-                });
+                var msg = $"{Messages.CalcPriceSaved}\n\n{Messages.CalcCalculating}";
+                await MessageHelper.SendMessageSafeAsync(botClient, chatId, msg, cancellationToken);
 
-                var msg = $"{Messages.CalcPriceSaved}\n\n{Messages.CalcStep3}";
-                
-                // Add country-specific delivery note
-                var notes = calculator.GetCountrySpecificNotes();
-                if (!string.IsNullOrEmpty(notes))
-                {
-                    msg += $"\n\n?? {notes}";
-                }
-
-                await MessageHelper.SendMessageSafeAsync(botClient, chatId, msg, cancellationToken, replyMarkup: keyboard);
+                await Task.Delay(1000, cancellationToken);
+                await CalculateFinalPriceAsync(botClient, chatId, cancellationToken);
             }
             else
             {
-                await MessageHelper.SendMessageSafeAsync(botClient, chatId, Messages.InvalidPrice, cancellationToken);
+                await MessageHelper.SendMessageSafeAsync(botClient, chatId, Messages.InvalidPrice, cancellationToken, includeMainMenuButton: true);
             }
         }
     }
@@ -122,28 +106,26 @@ public class CalculationHandler
             message += $"{Messages.CalcStep2}\n\n" +
                       $"{Messages.CalcPriceExample}";
 
-            await MessageHelper.SendMessageSafeAsync(botClient, chatId, message, cancellationToken, ParseMode.Markdown);
+            var keyboard = new InlineKeyboardMarkup(new[]
+            {
+                new[]
+                {
+                    InlineKeyboardButton.WithCallbackData(Buttons.ButtonMainMenu, "main_menu")
+                }
+            });
+
+            await MessageHelper.SendMessageSafeAsync(botClient, chatId, message, cancellationToken, ParseMode.Markdown, keyboard);
         }
     }
 
     /// <summary>
-    /// Handles delivery type selection
+    /// Handles delivery type selection - No longer used, kept for compatibility
     /// </summary>
     public async Task HandleDeliverySelectionAsync(ITelegramBotClient botClient, long chatId, string deliveryType, CancellationToken cancellationToken)
     {
-        if (_userSessions.ContainsKey(chatId))
-        {
-            _userSessions[chatId].DeliveryType = deliveryType;
-            _userSessions[chatId].CurrentStep = "complete";
-
-            var deliveryText = deliveryType == "ship" ? Messages.DeliveryShip : Messages.DeliveryTrain;
-            var message = $"{string.Format(Messages.CalcDeliverySelected, deliveryText)}\n\n{Messages.CalcCalculating}";
-
-            await MessageHelper.SendMessageSafeAsync(botClient, chatId, message, cancellationToken, ParseMode.Markdown);
-
-            await Task.Delay(1000, cancellationToken);
-            await CalculateFinalPriceAsync(botClient, chatId, cancellationToken);
-        }
+        // This method is kept for backward compatibility but is no longer used
+        // Delivery type is now automatically set to "train" when price is entered
+        await Task.CompletedTask;
     }
 
     /// <summary>
@@ -155,7 +137,7 @@ public class CalculationHandler
 
         if (session.CarPrice == null || session.Country == null || session.DeliveryType == null)
         {
-            await MessageHelper.SendMessageSafeAsync(botClient, chatId, Messages.ErrorDataIncomplete, cancellationToken);
+            await MessageHelper.SendMessageSafeAsync(botClient, chatId, Messages.ErrorDataIncomplete, cancellationToken, includeMainMenuButton: true);
             _userSessions.Remove(chatId);
             return;
         }
@@ -171,7 +153,17 @@ public class CalculationHandler
         // Get formatted result text with country-specific breakdown
         var resultText = _calculationService.GetCalculationResultText(session, carPrice, total);
 
-        await MessageHelper.SendMessageSafeAsync(botClient, chatId, resultText, cancellationToken, ParseMode.Markdown);
+        // Create keyboard with "New Calculation" and "Main Menu" buttons
+        var keyboard = new InlineKeyboardMarkup(new[]
+        {
+            new[]
+            {
+                InlineKeyboardButton.WithCallbackData(Buttons.ButtonNewCalculation, "new_calculation"),
+                InlineKeyboardButton.WithCallbackData(Buttons.ButtonMainMenu, "main_menu")
+            }
+        });
+
+        await MessageHelper.SendMessageSafeAsync(botClient, chatId, resultText, cancellationToken, ParseMode.Markdown, keyboard);
 
         // Clear session
         _userSessions.Remove(chatId);
@@ -183,6 +175,17 @@ public class CalculationHandler
     public async Task ShowExampleAsync(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
     {
         var exampleText = _calculationService.GetExampleText();
-        await MessageHelper.SendMessageSafeAsync(botClient, chatId, exampleText, cancellationToken, ParseMode.Markdown);
+        
+        // Create keyboard with "Calculate" and "Main Menu" buttons
+        var keyboard = new InlineKeyboardMarkup(new[]
+        {
+            new[]
+            {
+                InlineKeyboardButton.WithCallbackData(Buttons.ButtonNewCalculation, "new_calculation"),
+                InlineKeyboardButton.WithCallbackData(Buttons.ButtonMainMenu, "main_menu")
+            }
+        });
+
+        await MessageHelper.SendMessageSafeAsync(botClient, chatId, exampleText, cancellationToken, ParseMode.Markdown, keyboard);
     }
 }

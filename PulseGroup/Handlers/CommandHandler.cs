@@ -76,7 +76,8 @@ public class CommandHandler
             default:
                 await MessageHelper.SendMessageSafeAsync(botClient, chatId,
                     string.Format(Localization.Messages.UnknownCommand, command),
-                    cancellationToken);
+                    cancellationToken,
+                    includeMainMenuButton: true);
                 break;
         }
     }
@@ -129,16 +130,15 @@ public class CommandHandler
                      $"{Localization.Messages.HelpCarCalculatorTitle}\n" +
                      $"{Localization.Messages.HelpDescription}\n\n" +
                      $"{Localization.Messages.HelpItemCarPrice}\n" +
-                     $"{Localization.Messages.HelpItemDocsChina}\n" +
+                     $"{Localization.Messages.HelpItemImportPreparation}\n" +
                      $"{Localization.Messages.HelpItemDelivery}\n" +
-                     $"{Localization.Messages.HelpItemPort}\n" +
+                     $"{Localization.Messages.HelpItemBroker}\n" +
+                     $"{Localization.Messages.HelpItemTransport}\n" +
                      $"{Localization.Messages.HelpItemCustoms}\n" +
-                     $"{Localization.Messages.HelpItemEvacuator}\n" +
-                     $"{Localization.Messages.HelpItemEuroRegistration}\n" +
                      $"{Localization.Messages.HelpItemServices}\n\n" +
                      $"{Localization.Messages.HelpUseCalculate}";
 
-        await MessageHelper.SendMessageSafeAsync(botClient, chatId, message, cancellationToken, ParseMode.Markdown);
+        await MessageHelper.SendMessageSafeAsync(botClient, chatId, message, cancellationToken, ParseMode.Markdown, includeMainMenuButton: true);
     }
 
     private async Task HandleAboutCommand(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
@@ -151,7 +151,7 @@ public class CommandHandler
                      $"{Localization.Messages.AboutDotNet}\n\n" +
                      $"{Localization.Messages.AboutTurnkey}";
 
-        await MessageHelper.SendMessageSafeAsync(botClient, chatId, message, cancellationToken, ParseMode.Markdown);
+        await MessageHelper.SendMessageSafeAsync(botClient, chatId, message, cancellationToken, ParseMode.Markdown, includeMainMenuButton: true);
     }
 
     private async Task HandleInfoCommand(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)
@@ -164,6 +164,6 @@ public class CommandHandler
                   $"{string.Format(Localization.Messages.InfoUserId, message.From?.Id)}\n" +
                   $"{string.Format(Localization.Messages.InfoName, message.From?.FirstName)}";
 
-        await MessageHelper.SendMessageSafeAsync(botClient, chatId, info, cancellationToken, ParseMode.Markdown);
+        await MessageHelper.SendMessageSafeAsync(botClient, chatId, info, cancellationToken, ParseMode.Markdown, includeMainMenuButton: true);
     }
 }

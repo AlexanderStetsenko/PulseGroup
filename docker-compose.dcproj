@@ -9,9 +9,21 @@
     <DockerServiceName>pulsegroup-bot</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="BEFORE_AFTER_COMPARISON.md" />
+    <None Include="BEFORE_AFTER_UI_COMPARISON.md" />
+    <None Include="CALCULATION_FIX_SUMMARY.md" />
+    <None Include="CALCULATOR_UPDATE_SUMMARY.md" />
+    <None Include="CONFIG_DIAGNOSIS.md" />
+    <None Include="DEBUGGING_GUIDE.md" />
     <None Include="docker-compose.yml" />
     <None Include="docker-compose.override.yml" />
     <None Include=".dockerignore" />
+    <None Include="NAVIGATION_IMPROVEMENTS.md" />
+    <None Include="QUICK_DEBUG.md" />
     <None Include="render.yaml" />
+    <None Include="RENDER_CONFIG_FIX.md" />
+    <None Include="RUSSIAN_LOCALIZATION_SUMMARY.md" />
+    <None Include="UI_IMPROVEMENTS_SUMMARY.md" />
+    <None Include="UI_SIMPLIFICATION_SUMMARY.md" />
   </ItemGroup>
 </Project>

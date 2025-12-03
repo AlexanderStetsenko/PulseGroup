@@ -58,36 +58,28 @@ public class AdminCallbackHandler
                 await ShowQuickSettingsAsync(botClient, chatId, cancellationToken);
                 break;
 
-            case "admin_edit_docs_china":
-                await PromptForSettingAsync(botClient, chatId, "docs_china", Localization.AdminSettings.AdminSettingDocsChina, cancellationToken);
+            case "admin_edit_import_preparation":
+                await PromptForSettingAsync(botClient, chatId, "import_preparation", Localization.AdminSettings.AdminSettingImportPreparation, cancellationToken);
                 break;
 
-            case "admin_edit_port_fee":
-                await PromptForSettingAsync(botClient, chatId, "port_fee", Localization.AdminSettings.AdminSettingPort, cancellationToken);
+            case "admin_edit_land_sea_delivery":
+                await PromptForSettingAsync(botClient, chatId, "land_sea_delivery", Localization.AdminSettings.AdminSettingLandSeaDelivery, cancellationToken);
                 break;
 
-            case "admin_edit_evacuator":
-                await PromptForSettingAsync(botClient, chatId, "evacuator", Localization.AdminSettings.AdminSettingEvacuator, cancellationToken);
+            case "admin_edit_broker":
+                await PromptForSettingAsync(botClient, chatId, "broker", Localization.AdminSettings.AdminSettingBroker, cancellationToken);
                 break;
 
-            case "admin_edit_euro_registration":
-                await PromptForSettingAsync(botClient, chatId, "euro_registration", Localization.AdminSettings.AdminSettingEuroReg, cancellationToken);
+            case "admin_edit_transport_from_port":
+                await PromptForSettingAsync(botClient, chatId, "transport_from_port", Localization.AdminSettings.AdminSettingTransportFromPort, cancellationToken);
                 break;
 
-            case "admin_edit_services_fee":
-                await PromptForSettingAsync(botClient, chatId, "services_fee", Localization.AdminSettings.AdminSettingServices, cancellationToken);
+            case "admin_edit_import_services":
+                await PromptForSettingAsync(botClient, chatId, "import_services", Localization.AdminSettings.AdminSettingImportServices, cancellationToken);
                 break;
 
             case "admin_edit_customs_percent":
                 await PromptForSettingAsync(botClient, chatId, "customs_percent", Localization.AdminSettings.AdminSettingCustoms, cancellationToken);
-                break;
-
-            case "admin_edit_delivery_ship":
-                await PromptForSettingAsync(botClient, chatId, "delivery_ship", Localization.AdminSettings.AdminSettingDeliveryShip, cancellationToken);
-                break;
-
-            case "admin_edit_delivery_train":
-                await PromptForSettingAsync(botClient, chatId, "delivery_train", Localization.AdminSettings.AdminSettingDeliveryTrain, cancellationToken);
                 break;
 
             case "admin_reset_all":
@@ -115,7 +107,17 @@ public class AdminCallbackHandler
     private async Task ShowPricingAsync(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
     {
         var pricingText = _calculationService.GetPricingText();
-        await MessageHelper.SendMessageSafeAsync(botClient, chatId, pricingText, cancellationToken, Telegram.Bot.Types.Enums.ParseMode.Markdown);
+        
+        var keyboard = new Telegram.Bot.Types.ReplyMarkups.InlineKeyboardMarkup(new[]
+        {
+            new[]
+            {
+                Telegram.Bot.Types.ReplyMarkups.InlineKeyboardButton.WithCallbackData(Localization.Buttons.ButtonBackToMenu, "admin_back_to_menu"),
+                Telegram.Bot.Types.ReplyMarkups.InlineKeyboardButton.WithCallbackData(Localization.Buttons.ButtonMainMenu, "main_menu")
+            }
+        });
+
+        await MessageHelper.SendMessageSafeAsync(botClient, chatId, pricingText, cancellationToken, Telegram.Bot.Types.Enums.ParseMode.Markdown, keyboard);
     }
 
     private async Task ShowQuickSettingsAsync(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
@@ -171,7 +173,8 @@ public class AdminCallbackHandler
 
         await MessageHelper.SendMessageSafeAsync(botClient, chatId,
             Localization.Messages.AdminLogoutMessage,
-            cancellationToken);
+            cancellationToken,
+            includeMainMenuButton: true);
     }
 
     private async Task ResetStatisticsAsync(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
@@ -189,13 +192,11 @@ public class AdminCallbackHandler
     {
         return settingName switch
         {
-            "docs_china" => _pricingConfig.Docs,
-            "port_fee" => _pricingConfig.PortFee,
-            "evacuator" => _pricingConfig.Evacuator,
-            "euro_registration" => _pricingConfig.EuroRegistration,
-            "services_fee" => _pricingConfig.ServicesFee,
-            "delivery_ship" => _pricingConfig.DeliveryShip,
-            "delivery_train" => _pricingConfig.DeliveryTrain,
+            "import_preparation" => _pricingConfig.ImportPreparation,
+            "land_sea_delivery" => _pricingConfig.LandSeaDelivery,
+            "broker" => _pricingConfig.Broker,
+            "transport_from_port" => _pricingConfig.TransportFromPort,
+            "import_services" => _pricingConfig.ImportServices,
             "customs_percent" => _pricingConfig.CustomsPercent * 100,
             _ => 0
         };

@@ -35,7 +35,7 @@ public static class Localization
         public const string UnknownCommand = "❌ Неизвестная команда: {0}\nИспользуйте /help для списка команд.";
         public const string AccessDenied = "❌ Доступ запрещен!\n\nИспользуйте /admin для входа.";
         public const string ErrorDataIncomplete = "❌ Ошибка: не все данные заполнены. Начните заново с /calculate";
-        public const string InvalidPrice = "❌ Пожалуйста, введите корректную цену (только число).\nНапример: 93285";
+        public const string InvalidPrice = "❌ Пожалуйста, введите корректную цену (только число).\nНапример: 2000";
         public const string UnknownMessage = "❓ Я не понимаю. Используйте /start чтобы увидеть доступные команды.";
         public const string UnknownUpdateType = "❓ Неизвестный тип обновления: {0}";
 
@@ -70,12 +70,11 @@ public static class Localization
         public const string HelpCarCalculatorTitle = "🚗 *Калькулятор автомобилей*";
         public const string HelpDescription = "Этот бот поможет вам рассчитать полную стоимость автомобиля из Китая с учетом всех расходов:";
         public const string HelpItemCarPrice = "• Стоимость авто";
-        public const string HelpItemDocsChina = "• Доки в Китае";
-        public const string HelpItemDelivery = "• Доставка (корабль/поезд)";
-        public const string HelpItemPort = "• Порт";
+        public const string HelpItemImportPreparation = "• Подготовка импорта";
+        public const string HelpItemDelivery = "• Доставка суша + море";
+        public const string HelpItemBroker = "• Брокер";
+        public const string HelpItemTransport = "• Транспорт от порта";
         public const string HelpItemCustoms = "• Таможня";
-        public const string HelpItemEvacuator = "• Эвакуатор";
-        public const string HelpItemEuroRegistration = "• Учет Европа";
         public const string HelpItemServices = "• Услуги за привоз";
         public const string HelpUseCalculate = "Используйте /calculate для начала расчета!";
 
@@ -98,10 +97,10 @@ public static class Localization
 
         // Calculator
         public const string CalcTitle = "🧮 *Калькулятор стоимости автомобиля*";
-        public const string CalcStep1 = "Шаг 1/3: Выберите страну, откуда везем автомобиль:";
-        public const string CalcStep2 = "Шаг 2/3: Введите стоимость автомобиля в долларах США ($)";
+        public const string CalcStep1 = "Шаг 1/2: Выберите страну, откуда везем автомобиль:";
+        public const string CalcStep2 = "Шаг 2/2: Введите стоимость автомобиля в долларах США ($)";
         public const string CalcStep3 = "🚚 Выберите тип доставки:";
-        public const string CalcPriceExample = "Например: 93285";
+        public const string CalcPriceExample = "Например: 2000";
         public const string CalcCountrySelected = "✅ Выбрана страна: *{0}*";
         public const string CalcPriceSaved = "✅ Цена сохранена!";
         public const string CalcDeliverySelected = "✅ Выбрана доставка: *{0}*";
@@ -138,36 +137,27 @@ public static class Localization
         public const string ResultDelivery = "🚚 Доставка: *{0}*";
         public const string ResultTotal = "💰 *ИТОГО: ${0:N0}*";
         public const string ResultDetailsTitle = "*Детализация расходов:*";
-        public const string ResultItemCar = "• авто ${0:N0}";
-        public const string ResultItemDocsChina = "• доки в Китае ${0:N0}";
-        public const string ResultItemDelivery = "• доставка ${0:N0}";
-        public const string ResultItemPort = "• порт ${0:N0}";
-        public const string ResultItemCustoms = "• таможня ${0:N0}";
-        public const string ResultItemEvacuator = "• эвакуатор ${0:N0}";
-        public const string ResultItemEuroReg = "• учёт Европы ${0:N0}";
-        public const string ResultItemServices = "• услуги за привоз ${0:N0}";
         public const string ResultTurnkey = "✅ Полностью готовая машина с документами и номерами.";
+        public const string ResultFooterNote = "💡 Здесь нужно добавить или 2000$ в конце или 3000$";
         public const string ResultNewCalculation = "📝 Для нового расчета используйте /calculate";
 
         // Example
         public const string ExampleTitle = "📋 *Пример расчета стоимости автомобиля*";
-        public const string ExampleCarModel = "🚗 *ZEEKR 9X 2025 Ultra 70kWh (10 км)*";
-        public const string ExampleCarDescription = "🇨🇳 Авто из Китая, под ключ на польском учёте";
+        public const string ExampleCarModel = "🚗 *Автомобиль из Китая*";
+        public const string ExampleCarDescription = "🇨🇳 Авто из Китая, под ключ";
         public const string ExampleTotal = "💰 *Итого: ${0:N0}*";
         public const string ExampleIncluded = "*Включено:*";
         public const string ExampleUseCalculate = "💡 Используйте /calculate для своего расчета!";
 
         // Pricing
         public const string PricingTitle = "💰 *Текущие тарифы*";
-        public const string PricingDocsChina = "📝 Доки в Китае: ${0:N2}";
-        public const string PricingPort = "⚓ Порт: ${0:N2}";
-        public const string PricingEvacuator = "🚛 Эвакуатор: ${0:N2}";
-        public const string PricingEuroReg = "📋 Учет Европа: ${0:N2}";
-        public const string PricingServices = "🔧 Услуги за привоз: ${0:N2}";
-        public const string PricingDeliveryShip = "🚢 Доставка корабль: ${0:N2}";
-        public const string PricingDeliveryTrain = "🚂 Доставка поезд: ${0:N2}";
+        public const string PricingImportPreparation = "📝 Подготовка импорта: ${0:N2}";
+        public const string PricingLandSeaDelivery = "🚢 Доставка суша + море: ${0:N2}";
+        public const string PricingBroker = "👔 Брокер: ${0:N2}";
+        public const string PricingTransportFromPort = "🚛 Транспорт от порта: ${0:N2}";
         public const string PricingCustoms = "📊 Таможня: {0:N2}%";
-
+        public const string PricingImportServices = "🔧 Услуги за привоз: ${0:N2}";
+        
         // Console messages
         public const string ConsoleCommand = "🎮 Command: {0}";
         public const string ConsoleAdminAuth = "🔑 Admin auth attempt from @{0} (ChatID: {1})";
@@ -215,17 +205,21 @@ public static class Localization
         public const string ButtonDeliveryShip = "🚢 Корабль (Море)";
         public const string ButtonDeliveryTrain = "🚂 Поезд (ЖД)";
 
+        // Navigation buttons
+        public const string ButtonMainMenu = "🏠 Главное меню";
+        public const string ButtonBackToStart = "◀️ Назад к началу";
+        public const string ButtonNewCalculation = "🔄 Новый расчет";
+
+
         // Admin buttons
         public const string ButtonShowPricing = "📋 Показать тарифы";
         public const string ButtonQuickSettings = "⚙️ Быстрые настройки";
-        public const string ButtonEditDocsChina = "📝 Доки в Китае";
-        public const string ButtonEditPort = "⚓ Порт";
-        public const string ButtonEditEvacuator = "🚛 Эвакуатор";
-        public const string ButtonEditEuroReg = "📋 Учет Европа";
-        public const string ButtonEditServices = "🔧 Услуги";
+        public const string ButtonEditImportPreparation = "📝 Подготовка импорта";
+        public const string ButtonEditLandSeaDelivery = "🚢 Доставка";
+        public const string ButtonEditBroker = "👔 Брокер";
+        public const string ButtonEditTransport = "🚛 Транспорт от порта";
         public const string ButtonEditCustoms = "📊 Таможня %";
-        public const string ButtonEditDeliveryShip = "🚢 Доставка корабль";
-        public const string ButtonEditDeliveryTrain = "🚂 Доставка поезд";
+        public const string ButtonEditServices = "🔧 Услуги";
         public const string ButtonResetAll = "🔄 Сбросить все";
         public const string ButtonShowStats = "📈 Статистика";
         public const string ButtonLogout = "🚪 Выйти";
@@ -247,13 +241,11 @@ public static class Localization
     public static class AdminSettings
     {
         // Admin panel - Setting Names
-        public const string AdminSettingDocsChina = "Доки в Китае";
-        public const string AdminSettingPort = "Порт";
-        public const string AdminSettingEvacuator = "Эвакуатор";
-        public const string AdminSettingEuroReg = "Учёт Европа";
-        public const string AdminSettingServices = "Услуги за привоз";
+        public const string AdminSettingImportPreparation = "Подготовка импорта";
+        public const string AdminSettingLandSeaDelivery = "Доставка суша + море";
+        public const string AdminSettingBroker = "Брокер";
+        public const string AdminSettingTransportFromPort = "Транспорт от порта";
         public const string AdminSettingCustoms = "Таможня %";
-        public const string AdminSettingDeliveryShip = "Доставка корабль";
-        public const string AdminSettingDeliveryTrain = "Доставка поезд";
+        public const string AdminSettingImportServices = "Услуги за привоз";
     }
 }

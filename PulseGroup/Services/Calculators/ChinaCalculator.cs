@@ -1,4 +1,4 @@
-using PulseGroup.Models;
+﻿using PulseGroup.Models;
 using static PulseGroup.Handlers.Localization;
 
 namespace PulseGroup.Services.Calculators;
@@ -20,25 +20,43 @@ public class ChinaCalculator : ICountryCalculator
 
     public CalculationBreakdown GetBreakdown(decimal carPrice, string deliveryType, PricingConfig config)
     {
-        decimal delivery = deliveryType == "ship" ? config.DeliveryShip : config.DeliveryTrain;
-        decimal customs = carPrice * config.CustomsPercent;
+        Console.WriteLine($"🔍 DEBUG ChinaCalculator.GetBreakdown:");
+        Console.WriteLine($"   carPrice: {carPrice}");
+        Console.WriteLine($"   config.ImportPreparation: {config.ImportPreparation}");
+        Console.WriteLine($"   config.LandSeaDelivery: {config.LandSeaDelivery}");
+        Console.WriteLine($"   config.Broker: {config.Broker}");
+        Console.WriteLine($"   config.TransportFromPort: {config.TransportFromPort}");
+        Console.WriteLine($"   config.CustomsPercent: {config.CustomsPercent}");
+        Console.WriteLine($"   config.ImportServices: {config.ImportServices}");
+        
+        // Calculate customs as percentage of (car price + import services)
+        decimal customs = (carPrice + config.ImportServices) * config.CustomsPercent;
+        Console.WriteLine($"   calculated customs: {customs}");
 
         var breakdown = new CalculationBreakdown
         {
             CarPrice = carPrice,
-            DocsPrice = config.Docs,
-            DeliveryPrice = delivery,
-            PortFee = config.PortFee,
+            ImportPreparation = config.ImportPreparation,
+            LandSeaDelivery = config.LandSeaDelivery,
+            Broker = config.Broker,
+            TransportFromPort = config.TransportFromPort,
             Customs = customs,
-            Evacuator = config.Evacuator,
-            EuroRegistration = config.EuroRegistration,
-            ServicesFee = config.ServicesFee,
+            ImportServices = config.ImportServices,
             DeliveryType = deliveryType
         };
 
-        breakdown.Total = breakdown.CarPrice + breakdown.DocsPrice + breakdown.DeliveryPrice + 
-                         breakdown.PortFee + breakdown.Customs + breakdown.Evacuator + 
-                         breakdown.EuroRegistration + breakdown.ServicesFee;
+        // Total calculation: Car + all expenses
+        breakdown.Total = breakdown.CarPrice + 
+                         breakdown.ImportPreparation + 
+                         breakdown.LandSeaDelivery + 
+                         breakdown.Broker + 
+                         breakdown.TransportFromPort + 
+                         breakdown.Customs + 
+                         breakdown.ImportServices +
+                         1600;
+        
+        Console.WriteLine($"   total: {breakdown.Total}");
+        Console.WriteLine();
 
         return breakdown;
     }

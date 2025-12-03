@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace PulseGroup.Models;
 
 /// <summary>
@@ -5,14 +7,23 @@ namespace PulseGroup.Models;
 /// </summary>
 public class PricingConfig
 {
-    public decimal Docs { get; set; }
-    public decimal PortFee { get; set; }
-    public decimal Evacuator { get; set; }
-    public decimal EuroRegistration { get; set; }
-    public decimal ServicesFee { get; set; }
-    public decimal DeliveryShip { get; set; }
-    public decimal DeliveryTrain { get; set; }
+    [JsonPropertyName("ImportPreparation")]
+    public decimal ImportPreparation { get; set; }
+    
+    [JsonPropertyName("LandSeaDelivery")]
+    public decimal LandSeaDelivery { get; set; }
+    
+    [JsonPropertyName("Broker")]
+    public decimal Broker { get; set; }
+    
+    [JsonPropertyName("TransportFromPort")]
+    public decimal TransportFromPort { get; set; }
+    
+    [JsonPropertyName("CustomsPercent")]
     public decimal CustomsPercent { get; set; }
+    
+    [JsonPropertyName("ImportServices")]
+    public decimal ImportServices { get; set; }
 
     /// <summary>
     /// Returns default pricing configuration
@@ -21,14 +32,12 @@ public class PricingConfig
     {
         return new PricingConfig
         {
-            Docs = 1500m,
-            PortFee = 700m,
-            Evacuator = 3050m,
-            EuroRegistration = 1500m,
-            ServicesFee = 1600m,
-            DeliveryShip = 1500m,
-            DeliveryTrain = 3500m,
-            CustomsPercent = 0.31m
+            ImportPreparation = 2000m,
+            LandSeaDelivery = 3000m,
+            Broker = 400m,
+            TransportFromPort = 700m,
+            CustomsPercent = 0.31m,
+            ImportServices = 1600m
         };
     }
 
@@ -38,14 +47,12 @@ public class PricingConfig
     public void ResetToDefaults()
     {
         var defaults = GetDefault();
-        Docs = defaults.Docs;
-        PortFee = defaults.PortFee;
-        Evacuator = defaults.Evacuator;
-        EuroRegistration = defaults.EuroRegistration;
-        ServicesFee = defaults.ServicesFee;
-        DeliveryShip = defaults.DeliveryShip;
-        DeliveryTrain = defaults.DeliveryTrain;
+        ImportPreparation = defaults.ImportPreparation;
+        LandSeaDelivery = defaults.LandSeaDelivery;
+        Broker = defaults.Broker;
+        TransportFromPort = defaults.TransportFromPort;
         CustomsPercent = defaults.CustomsPercent;
+        ImportServices = defaults.ImportServices;
     }
 
     /// <summary>
@@ -53,13 +60,11 @@ public class PricingConfig
     /// </summary>
     public void ApplyMultiplier(decimal multiplier)
     {
-        Docs = Math.Round(Docs * multiplier, 2);
-        PortFee = Math.Round(PortFee * multiplier, 2);
-        Evacuator = Math.Round(Evacuator * multiplier, 2);
-        EuroRegistration = Math.Round(EuroRegistration * multiplier, 2);
-        ServicesFee = Math.Round(ServicesFee * multiplier, 2);
-        DeliveryShip = Math.Round(DeliveryShip * multiplier, 2);
-        DeliveryTrain = Math.Round(DeliveryTrain * multiplier, 2);
+        ImportPreparation = Math.Round(ImportPreparation * multiplier, 2);
+        LandSeaDelivery = Math.Round(LandSeaDelivery * multiplier, 2);
+        Broker = Math.Round(Broker * multiplier, 2);
+        TransportFromPort = Math.Round(TransportFromPort * multiplier, 2);
+        ImportServices = Math.Round(ImportServices * multiplier, 2);
         // Don't adjust CustomsPercent - it's a percentage
     }
 }

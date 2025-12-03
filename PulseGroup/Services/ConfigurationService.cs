@@ -21,10 +21,19 @@ public class ConfigurationService
             ? "/app/data" 
             : AppDomain.CurrentDomain.BaseDirectory;
 
+        // Ensure data directory exists
+        if (!Directory.Exists(dataDirectory))
+        {
+            Console.WriteLine($"?? Creating data directory: {dataDirectory}");
+            Directory.CreateDirectory(dataDirectory);
+        }
+
         _configFilePath = Path.Combine(dataDirectory, ConfigFileName);
         _statsFilePath = Path.Combine(dataDirectory, StatsFileName);
 
         Console.WriteLine($"?? Data directory: {dataDirectory}");
+        Console.WriteLine($"?? Config file: {_configFilePath}");
+        Console.WriteLine($"?? Config file exists: {File.Exists(_configFilePath)}");
     }
 
     /// <summary>
@@ -36,26 +45,83 @@ public class ConfigurationService
         {
             if (File.Exists(_configFilePath))
             {
+                Console.WriteLine($"?? Loading config from: {_configFilePath}");
                 var json = File.ReadAllText(_configFilePath);
-                var config = JsonSerializer.Deserialize<PricingConfig>(json);
+                Console.WriteLine($"?? Config file content ({json.Length} chars): {json.Substring(0, Math.Min(200, json.Length))}...");
+                
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    AllowTrailingCommas = true,
+                    ReadCommentHandling = JsonCommentHandling.Skip
+                };
+                
+                var config = JsonSerializer.Deserialize<PricingConfig>(json, options);
                 
                 if (config != null)
                 {
+                    // Validate that config has non-zero values
+                    if (config.ImportPreparation == 0 && config.LandSeaDelivery == 0)
+                    {
+                        Console.WriteLine("?? Config loaded but all values are zero - using defaults");
+                        config = PricingConfig.GetDefault();
+                        SaveConfiguration(config);
+                    }
+                    
                     Console.WriteLine(string.Format(Localization.Messages.ConsoleConfigLoaded, ConfigFileName));
+                    Console.WriteLine($"?? Loaded values:");
+                    Console.WriteLine($"   ImportPreparation: {config.ImportPreparation}");
+                    Console.WriteLine($"   LandSeaDelivery: {config.LandSeaDelivery}");
+                    Console.WriteLine($"   Broker: {config.Broker}");
+                    Console.WriteLine($"   TransportFromPort: {config.TransportFromPort}");
+                    Console.WriteLine($"   CustomsPercent: {config.CustomsPercent}");
+                    Console.WriteLine($"   ImportServices: {config.ImportServices}");
+                    Console.WriteLine();
                     return config;
                 }
+                else
+                {
+                    Console.WriteLine("?? Config deserialization returned null - using defaults");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"?? Config file not found at: {_configFilePath}");
             }
 
             Console.WriteLine(Localization.Messages.ConsoleConfigNotFound);
             var defaultConfig = PricingConfig.GetDefault();
+            Console.WriteLine("?? Creating default config...");
             SaveConfiguration(defaultConfig);
+            Console.WriteLine($"? Default config created with values:");
+            Console.WriteLine($"   ImportPreparation: {defaultConfig.ImportPreparation}");
+            Console.WriteLine($"   LandSeaDelivery: {defaultConfig.LandSeaDelivery}");
+            Console.WriteLine($"   Broker: {defaultConfig.Broker}");
+            Console.WriteLine($"   TransportFromPort: {defaultConfig.TransportFromPort}");
+            Console.WriteLine($"   CustomsPercent: {defaultConfig.CustomsPercent}");
+            Console.WriteLine($"   ImportServices: {defaultConfig.ImportServices}");
             return defaultConfig;
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"? Error in LoadConfiguration:");
+            Console.WriteLine($"   Message: {ex.Message}");
+            Console.WriteLine($"   Type: {ex.GetType().Name}");
+            Console.WriteLine($"   Stack: {ex.StackTrace}");
             Console.WriteLine(string.Format(Localization.Messages.ConsoleConfigLoadError, ex.Message));
             Console.WriteLine(Localization.Messages.ConsoleUsingDefaultConfig);
-            return PricingConfig.GetDefault();
+            var defaultConfig = PricingConfig.GetDefault();
+            Console.WriteLine($"?? Attempting to save default config...");
+            try
+            {
+                SaveConfiguration(defaultConfig);
+                Console.WriteLine($"? Default config saved successfully");
+            }
+            catch (Exception saveEx)
+            {
+                Console.WriteLine($"? Failed to save default config: {saveEx.Message}");
+            }
+            return defaultConfig;
         }
     }
 
@@ -66,18 +132,41 @@ public class ConfigurationService
     {
         try
         {
+            Console.WriteLine($"?? Saving configuration to: {_configFilePath}");
+            
             var options = new JsonSerializerOptions
             {
-                WriteIndented = true
+                WriteIndented = true,
+                PropertyNamingPolicy = null // Use exact property names
             };
 
             var json = JsonSerializer.Serialize(config, options);
+            Console.WriteLine($"?? Serialized config ({json.Length} chars):");
+            Console.WriteLine(json);
+            
             File.WriteAllText(_configFilePath, json);
+            
+            // Verify file was written
+            if (File.Exists(_configFilePath))
+            {
+                var fileInfo = new FileInfo(_configFilePath);
+                Console.WriteLine($"? Config file saved successfully");
+                Console.WriteLine($"   File size: {fileInfo.Length} bytes");
+                Console.WriteLine($"   Last modified: {fileInfo.LastWriteTime}");
+            }
+            else
+            {
+                Console.WriteLine($"? Config file was not created!");
+            }
             
             Console.WriteLine(string.Format(Localization.Messages.ConsoleConfigSaved, ConfigFileName));
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"? Error in SaveConfiguration:");
+            Console.WriteLine($"   Message: {ex.Message}");
+            Console.WriteLine($"   Type: {ex.GetType().Name}");
+            Console.WriteLine($"   Stack: {ex.StackTrace}");
             Console.WriteLine(string.Format(Localization.Messages.ConsoleConfigSaveError, ex.Message));
         }
     }

@@ -40,6 +40,23 @@ public class UpdateHandler
     {
         try
         {
+            Console.WriteLine($"????????????????????????????????????????");
+            Console.WriteLine($"?? UPDATE RECEIVED: Type = {update.Type}");
+            Console.WriteLine($"? Time: {DateTime.Now:HH:mm:ss}");
+
+            if (update.Message != null)
+            {
+                Console.WriteLine($"?? From: @{update.Message.From?.Username ?? "Unknown"} (ID: {update.Message.From?.Id})");
+                Console.WriteLine($"?? Message: {update.Message.Text ?? "[non-text]"}");
+            }
+            else if (update.CallbackQuery != null)
+            {
+                Console.WriteLine($"?? Callback: {update.CallbackQuery.Data}");
+                Console.WriteLine($"?? From: @{update.CallbackQuery.From?.Username ?? "Unknown"}");
+            }
+            Console.WriteLine($"????????????????????????????????????????");
+            Console.WriteLine();
+
             var handler = update.Type switch
             {
                 UpdateType.Message => HandleMessageAsync(botClient, update.Message!, cancellationToken),
@@ -48,11 +65,18 @@ public class UpdateHandler
             };
 
             await handler;
+
+            Console.WriteLine("? Update processed successfully");
+            Console.WriteLine();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error handling update: {ex.Message}");
-            Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            Console.WriteLine($"? ERROR in HandleUpdateAsync:");
+            Console.WriteLine($"   Message: {ex.Message}");
+            Console.WriteLine($"   Type: {ex.GetType().Name}");
+            Console.WriteLine($"   Stack trace:");
+            Console.WriteLine($"   {ex.StackTrace}");
+            Console.WriteLine();
         }
     }
 
@@ -104,7 +128,8 @@ public class UpdateHandler
         Console.WriteLine($"? Unknown message type from chatId: {chatId}");
         await MessageHelper.SendMessageSafeAsync(botClient, chatId,
             Localization.Messages.UnknownMessage,
-            cancellationToken);
+            cancellationToken,
+            includeMainMenuButton: true);
     }
 
     /// <summary>

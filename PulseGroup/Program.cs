@@ -43,6 +43,7 @@ app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 Console.WriteLine("?? PulseGroup Bot Starting...");
 Console.WriteLine($"?? Version: {BotConfig.BotVersion}");
 Console.WriteLine($"?? HTTP Server listening on port: {port}");
+Console.WriteLine($"?? Bot Token: {BotConfig.BotToken.Substring(0, 10)}..."); // Show only first 10 chars
 Console.WriteLine();
 
 // Create bot client
@@ -51,22 +52,44 @@ var botClient = BotInitializer.CreateBotClient();
 using CancellationTokenSource cts = new();
 
 // Test connection
+Console.WriteLine("?? Testing connection to Telegram API...");
 if (!await BotInitializer.TestConnectionAsync(botClient, cts.Token))
 {
-    Console.WriteLine("Failed to connect. Exiting...");
+    Console.WriteLine("? Failed to connect. Exiting...");
+    Console.WriteLine();
+    Console.WriteLine("Press any key to exit...");
+    Console.ReadKey();
     return;
 }
+
+Console.WriteLine("? Bot connection successful!");
+Console.WriteLine();
 
 // ============================================================================
 // INITIALIZE SERVICES AND HANDLERS
 // ============================================================================
+Console.WriteLine("?? Initializing configuration...");
+
 // Session dictionaries
 var userSessions = new Dictionary<long, CarCalculation>();
 var adminSessions = new Dictionary<long, AdminSession>();
 
 // Services
 var configurationService = new ConfigurationService();
+Console.WriteLine($"?? Config file path: {configurationService.GetConfigFilePath()}");
+Console.WriteLine($"?? Stats file path: {configurationService.GetStatsFilePath()}");
+Console.WriteLine();
+
 var pricingConfig = configurationService.LoadConfiguration();
+Console.WriteLine($"? Configuration loaded successfully");
+Console.WriteLine($"   ImportPreparation: ${pricingConfig.ImportPreparation}");
+Console.WriteLine($"   LandSeaDelivery: ${pricingConfig.LandSeaDelivery}");
+Console.WriteLine($"   Broker: ${pricingConfig.Broker}");
+Console.WriteLine($"   TransportFromPort: ${pricingConfig.TransportFromPort}");
+Console.WriteLine($"   CustomsPercent: {pricingConfig.CustomsPercent * 100}%");
+Console.WriteLine($"   ImportServices: ${pricingConfig.ImportServices}");
+Console.WriteLine();
+
 var statisticsService = new StatisticsService(configurationService);
 var calculationService = new CalculationService(pricingConfig);
 
@@ -77,6 +100,9 @@ var adminCallbackHandler = new AdminCallbackHandler(adminSessions, pricingConfig
 var commandHandler = new CommandHandler(userSessions, adminSessions, calculationHandler, adminHandler);
 var callbackQueryHandler = new CallbackQueryHandler(userSessions, adminSessions, calculationHandler, adminCallbackHandler);
 var updateHandler = new UpdateHandler(userSessions, adminSessions, commandHandler, calculationHandler, adminHandler, callbackQueryHandler);
+
+Console.WriteLine("? All handlers initialized");
+Console.WriteLine();
 
 // ============================================================================
 // START RECEIVING UPDATES

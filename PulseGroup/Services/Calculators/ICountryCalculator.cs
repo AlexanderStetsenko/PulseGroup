@@ -44,13 +44,12 @@ public interface ICountryCalculator
 public class CalculationBreakdown
 {
     public decimal CarPrice { get; set; }
-    public decimal DocsPrice { get; set; }
-    public decimal DeliveryPrice { get; set; }
-    public decimal PortFee { get; set; }
+    public decimal ImportPreparation { get; set; }
+    public decimal LandSeaDelivery { get; set; }
+    public decimal Broker { get; set; }
+    public decimal TransportFromPort { get; set; }
     public decimal Customs { get; set; }
-    public decimal Evacuator { get; set; }
-    public decimal EuroRegistration { get; set; }
-    public decimal ServicesFee { get; set; }
+    public decimal ImportServices { get; set; }
     public decimal Total { get; set; }
     public string DeliveryType { get; set; } = string.Empty;
 }

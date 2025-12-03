@@ -27,6 +27,9 @@ ENV LANG=ru_RU.UTF-8
 # Copy published app
 COPY --from=publish /app/publish .
 
+# Create data directory with proper permissions
+RUN mkdir -p /app/data && chmod 777 /app/data
+
 # Create volume for persistent data (config and statistics)
 VOLUME ["/app/data"]
 

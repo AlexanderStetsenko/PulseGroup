@@ -40,7 +40,16 @@ public class CallbackQueryHandler
         await botClient.AnswerCallbackQuery(callbackQuery.Id, cancellationToken: cancellationToken);
 
         // Route to appropriate handler
-        if (data.StartsWith("country_"))
+        if (data == "main_menu")
+        {
+            await HandleMainMenuCallback(botClient, chatId, cancellationToken);
+        }
+        else if (data == "new_calculation")
+        {
+            _adminSessions.Remove(chatId);
+            await _calculationHandler.StartCalculationAsync(botClient, chatId, cancellationToken);
+        }
+        else if (data.StartsWith("country_"))
         {
             var country = data.Replace("country_", "");
             await _calculationHandler.HandleCountrySelectionAsync(botClient, chatId, country, cancellationToken);
@@ -54,5 +63,23 @@ public class CallbackQueryHandler
         {
             await _adminCallbackHandler.HandleAdminCallbackAsync(botClient, chatId, data, cancellationToken);
         }
+    }
+
+    private async Task HandleMainMenuCallback(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
+    {
+        // Clear any active sessions
+        _userSessions.Remove(chatId);
+        _adminSessions.Remove(chatId);
+
+        var message = $"{Localization.Messages.WelcomeTitle}\n\n" +
+                     $"{Localization.Messages.WelcomeSubtitle}\n\n" +
+                     $"{Localization.Messages.AvailableCommands}\n" +
+                     $"{Localization.Messages.CommandCalculate}\n" +
+                     $"{Localization.Messages.CommandExample}\n" +
+                     $"{Localization.Messages.CommandHelp}\n" +
+                     $"{Localization.Messages.CommandAbout}\n" +
+                     $"{Localization.Messages.CommandAdmin}";
+
+        await MessageHelper.SendMessageSafeAsync(botClient, chatId, message, cancellationToken);
     }
 }

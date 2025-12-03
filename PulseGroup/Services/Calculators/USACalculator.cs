@@ -14,33 +14,35 @@ public class USACalculator : ICountryCalculator
 
     public decimal CalculateTotalPrice(decimal carPrice, string deliveryType, PricingConfig config)
     {
-        // TODO: Implement USA calculator
         var breakdown = GetBreakdown(carPrice, deliveryType, config);
         return breakdown.Total;
     }
 
     public CalculationBreakdown GetBreakdown(decimal carPrice, string deliveryType, PricingConfig config)
     {
-        // PLACEHOLDER: Not implemented yet - using China calculator logic temporarily
-        decimal delivery = config.DeliveryShip; // USA uses ship only
+        // Calculate customs as percentage of car price
         decimal customs = carPrice * config.CustomsPercent;
 
         var breakdown = new CalculationBreakdown
         {
             CarPrice = carPrice,
-            DocsPrice = config.Docs,
-            DeliveryPrice = delivery,
-            PortFee = config.PortFee,
+            ImportPreparation = config.ImportPreparation,
+            LandSeaDelivery = config.LandSeaDelivery,
+            Broker = config.Broker,
+            TransportFromPort = config.TransportFromPort,
             Customs = customs,
-            Evacuator = config.Evacuator,
-            EuroRegistration = config.EuroRegistration,
-            ServicesFee = config.ServicesFee,
-            DeliveryType = "ship"
+            ImportServices = config.ImportServices,
+            DeliveryType = "ship" // USA typically uses ship delivery
         };
 
-        breakdown.Total = breakdown.CarPrice + breakdown.DocsPrice + breakdown.DeliveryPrice + 
-                         breakdown.PortFee + breakdown.Customs + breakdown.Evacuator + 
-                         breakdown.EuroRegistration + breakdown.ServicesFee;
+        // Total calculation: Car + all expenses
+        breakdown.Total = breakdown.CarPrice + 
+                         breakdown.ImportPreparation + 
+                         breakdown.LandSeaDelivery + 
+                         breakdown.Broker + 
+                         breakdown.TransportFromPort + 
+                         breakdown.Customs + 
+                         breakdown.ImportServices;
 
         return breakdown;
     }

@@ -14,7 +14,6 @@ public class EuropeCalculator : ICountryCalculator
 
     public decimal CalculateTotalPrice(decimal carPrice, string deliveryType, PricingConfig config)
     {
-        // TODO: Implement Europe calculator
         var breakdown = GetBreakdown(carPrice, deliveryType, config);
         return breakdown.Total;
     }
@@ -22,24 +21,28 @@ public class EuropeCalculator : ICountryCalculator
     public CalculationBreakdown GetBreakdown(decimal carPrice, string deliveryType, PricingConfig config)
     {
         // PLACEHOLDER: Not implemented yet - using simplified logic temporarily
-        decimal customs = 0; // No customs within EU
+        decimal customs = 0; // No customs within EU typically
 
         var breakdown = new CalculationBreakdown
         {
             CarPrice = carPrice,
-            DocsPrice = config.Docs * 0.5m,
-            DeliveryPrice = config.Evacuator,
-            PortFee = 0,
+            ImportPreparation = config.ImportPreparation * 0.5m, // Reduced for EU
+            LandSeaDelivery = config.TransportFromPort, // Just road transport
+            Broker = 0,
+            TransportFromPort = 0,
             Customs = customs,
-            Evacuator = 0,
-            EuroRegistration = config.EuroRegistration,
-            ServicesFee = config.ServicesFee,
+            ImportServices = config.ImportServices,
             DeliveryType = "road"
         };
 
-        breakdown.Total = breakdown.CarPrice + breakdown.DocsPrice + breakdown.DeliveryPrice + 
-                         breakdown.PortFee + breakdown.Customs + breakdown.Evacuator + 
-                         breakdown.EuroRegistration + breakdown.ServicesFee;
+        // Total calculation: Car + all expenses
+        breakdown.Total = breakdown.CarPrice + 
+                         breakdown.ImportPreparation + 
+                         breakdown.LandSeaDelivery + 
+                         breakdown.Broker + 
+                         breakdown.TransportFromPort + 
+                         breakdown.Customs + 
+                         breakdown.ImportServices;
 
         return breakdown;
     }

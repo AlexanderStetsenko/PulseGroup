@@ -11,6 +11,20 @@ namespace PulseGroup.Handlers;
 public static class MessageHelper
 {
     /// <summary>
+    /// Creates a keyboard with "Main Menu" button
+    /// </summary>
+    public static InlineKeyboardMarkup CreateMainMenuButton()
+    {
+        return new InlineKeyboardMarkup(new[]
+        {
+            new[]
+            {
+                InlineKeyboardButton.WithCallbackData(Localization.Buttons.ButtonMainMenu, "main_menu")
+            }
+        });
+    }
+
+    /// <summary>
     /// Sends a message with automatic retry on failure
     /// </summary>
     public static async Task SendMessageSafeAsync(
@@ -19,8 +33,15 @@ public static class MessageHelper
         string text,
         CancellationToken cancellationToken,
         ParseMode parseMode = default,
-        InlineKeyboardMarkup? replyMarkup = null)
+        InlineKeyboardMarkup? replyMarkup = null,
+        bool includeMainMenuButton = false)
     {
+        // If includeMainMenuButton is true and no replyMarkup provided, add main menu button
+        if (includeMainMenuButton && replyMarkup == null)
+        {
+            replyMarkup = CreateMainMenuButton();
+        }
+
         int retryCount = 0;
         int maxRetries = 3;
         bool parseModeFailed = false;
